@@ -1,125 +1,106 @@
 (() => {
-  const LANGS = ["ja","en","es","fr","ko","zh-hans"];
+  "use strict";
+
+  const $ = (sel, root=document) => root.querySelector(sel);
+
+  const SUPPORTED = ["ja","en","es","fr","ko","zh-hans"];
   const DEFAULT_LANG = "ja";
 
-  const i18n = {
-    h1: { ja:"NEWS", en:"NEWS", es:"NOTICIAS", fr:"ACTUALITÉS", ko:"뉴스", "zh-hans":"新闻" },
-    lead: {
-      ja:"コラボ、個展、展覧会、公開情報をまとめます。",
-      en:"Updates on collaborations, exhibitions, and events.",
-      es:"Actualizaciones sobre colaboraciones, exposiciones y eventos.",
-      fr:"Actualités sur les collaborations, expositions et événements.",
-      ko:"콜라보, 전시, 이벤트 소식을 모읍니다.",
-      "zh-hans":"汇总合作、展览与活动更新。"
-    },
-    empty: {
-      ja:"まだNEWSはありません。今後ここに、コラボ・個展・展覧会のお知らせを追加します。",
-      en:"No news yet. Upcoming updates will appear here.",
-      es:"Aún no hay noticias. Próximas actualizaciones aparecerán aquí.",
-      fr:"Aucune actualité pour le moment. Les mises à jour apparaîtront ici.",
-      ko:"아직 뉴스가 없습니다. 앞으로 이곳에 소식이 추가됩니다.",
-      "zh-hans":"目前暂无内容，后续更新将发布在这里。"
+  function detectLangFromPath(){
+    const seg = location.pathname.split("/").filter(Boolean)[0];
+    return SUPPORTED.includes(seg) ? seg : "ja";
+  }
+
+  async function loadNews(){
+    const res = await fetch("/assets/data/news.json", { cache: "no-store" });
+    if(!res.ok) return { news: [] };
+    return await res.json();
+  }
+
+  function pickLang(obj, lang){
+    if(!obj) return "";
+    return obj[lang] ?? obj[DEFAULT_LANG] ?? "";
+  }
+
+  // /posts/<slug>/ を想定（必要なら post.html?id=xxx に変更可）
+  function getSlugFromPath(){
+    const parts = location.pathname.split("/").filter(Boolean);
+    const i = parts.indexOf("posts");
+    if(i >= 0 && parts[i+1]) return parts[i+1];
+    return null;
+  }
+
+  function fmtDate(iso){
+    if(!iso) return "";
+    // 表示だけ：2026-01-15 → 2026.01.15
+    return iso.replaceAll("-", ".");
+  }
+
+  async function renderNewsList(){
+    const mount = $("#newsList");
+    if(!mount) return;
+
+    const lang = detectLangFromPath();
+    const data = await loadNews();
+    const items = Array.isArray(data.news) ? data.news : [];
+
+    if(items.length === 0){
+      mount.innerHTML = `<div class="card"><p data-i18n="news.empty"></p></div>`;
+      return;
     }
-  };
 
-  const $ = (id) => document.getElementById(id);
+    // 新しい順
+    items.sort((a,b)=> String(b.date||"").localeCompare(String(a.date||"")));
 
-  function getLang() {
-    const url = new URL(location.href);
-    const q = (url.searchParams.get("lang") || "").toLowerCase();
-    const stored = (localStorage.getItem("sca_news_lang") || "").toLowerCase();
-    const lang = q || stored || DEFAULT_LANG;
-    return LANGS.includes(lang) ? lang : DEFAULT_LANG;
+    mount.innerHTML = "";
+    items.forEach(n => {
+      const title = pickLang(n.title, lang);
+      const excerpt = pickLang(n.excerpt, lang);
+      const href = `/posts/${n.id}/`; // ここは運用ルールとして固定
+
+      const a = document.createElement("a");
+      a.className = "tile";
+      a.href = href;
+      a.innerHTML = `
+        <div class="tile-inner">
+          <h2 class="tile-title">${title}</h2>
+          <p class="tile-hint">${fmtDate(n.date)} ${excerpt ? "— " + excerpt : ""}</p>
+        </div>
+      `;
+      mount.appendChild(a);
+    });
   }
 
-  function setLang(lang) {
-    document.documentElement.lang = lang;
-    localStorage.setItem("sca_news_lang", lang);
-    const sel = $("langSelect");
-    if (sel) sel.value = lang;
-    $("h1").textContent = i18n.h1[lang] || i18n.h1[DEFAULT_LANG];
-    $("lead").textContent = i18n.lead[lang] || i18n.lead[DEFAULT_LANG];
-  }
+  async function renderNewsPost(){
+    const slug = getSlugFromPath();
+    if(!slug) return;
 
-  function pick(v, lang) {
-    if (!v) return "";
-    if (typeof v === "string") return v;
-    return v[lang] || v[DEFAULT_LANG] || "";
-  }
+    const titleEl = $("#newsTitle");
+    const metaEl  = $("#newsMeta");
+    const bodyEl  = $("#newsBody");
+    if(!titleEl || !metaEl || !bodyEl) return;
 
-  function postUrl(item){
-    return item.externalUrl ? item.externalUrl : `/posts/${encodeURIComponent(item.slug)}/?lang=${encodeURIComponent(getLang())}`;
-  }
+    const lang = detectLangFromPath();
+    const data = await loadNews();
+    const items = Array.isArray(data.news) ? data.news : [];
+    const n = items.find(x => x.id === slug);
 
-  async function load(){
-    const lang = getLang();
-    setLang(lang);
-    $("y").textContent = String(new Date().getFullYear());
-
-    try{
-      const res = await fetch("/data/news.json", { cache:"no-store" });
-      const raw = await res.json();
-      const items = Array.isArray(raw) ? raw : [];
-
-      const list = $("newsList");
-      list.innerHTML = "";
-
-      if (items.length === 0) {
-        const empty = $("emptyState");
-        empty.style.display = "block";
-        empty.textContent = i18n.empty[lang] || i18n.empty[DEFAULT_LANG];
-        return;
-      }
-
-      $("emptyState").style.display = "none";
-
-      items
-        .sort((a,b)=>(String(b.date||"")).localeCompare(String(a.date||"")))
-        .forEach(item=>{
-          const a = document.createElement("a");
-          a.className = "news-card";
-          a.href = postUrl(item);
-          if (item.externalUrl) a.target = "_blank", a.rel="noopener";
-
-          const meta = document.createElement("div");
-          meta.className = "news-meta";
-          meta.textContent = item.date || "";
-
-          const h = document.createElement("h3");
-          h.className = "news-title";
-          h.textContent = pick(item.title, lang) || "(untitled)";
-
-          const p = document.createElement("p");
-          p.className = "news-summary";
-          p.textContent = pick(item.summary, lang);
-
-          a.appendChild(meta);
-          a.appendChild(h);
-          if (p.textContent) a.appendChild(p);
-
-          list.appendChild(a);
-        });
-
-    }catch(e){
-      const empty = $("emptyState");
-      empty.style.display = "block";
-      empty.textContent = "news.json を読み込めませんでした。/data/news.json の存在とJSON形式を確認してください。";
-      console.error(e);
+    if(!n){
+      titleEl.textContent = "NOT FOUND";
+      metaEl.textContent = "";
+      bodyEl.innerHTML = `<div class="card"><p>news not found</p></div>`;
+      return;
     }
+
+    titleEl.textContent = pickLang(n.title, lang);
+    metaEl.textContent  = fmtDate(n.date);
+
+    // body は HTML 文字列で持つ（太字/改行/リンクなど自由）
+    bodyEl.innerHTML = pickLang(n.body, lang) || "";
   }
 
-  window.addEventListener("DOMContentLoaded", ()=>{
-    const sel = $("langSelect");
-    if (sel) {
-      sel.addEventListener("change", ()=>{
-        const lang = sel.value;
-        localStorage.setItem("sca_news_lang", lang);
-        const url = new URL(location.href);
-        url.searchParams.set("lang", lang);
-        history.replaceState({}, "", url.toString());
-        load();
-      });
-    }
-    load();
+  document.addEventListener("DOMContentLoaded", async () => {
+    await renderNewsList();
+    await renderNewsPost();
   });
 })();
