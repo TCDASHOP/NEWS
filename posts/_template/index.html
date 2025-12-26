@@ -1,1 +1,104 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- ▼▼ ここは記事ごとに変更 ▼▼ -->
+  <title>（記事タイトル）｜NEWS｜SAIREN COLOR ARCHIVE</title>
+  <meta name="description" content="（記事の要約 120〜160文字）" />
+  <link rel="canonical" href="https://news.sairencolorarchive.com/posts/YYYY-MM-DD-slug/" />
+
+  <meta property="og:title" content="（記事タイトル）" />
+  <meta property="og:description" content="（記事の要約）" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://news.sairencolorarchive.com/posts/YYYY-MM-DD-slug/" />
+  <meta property="og:image" content="https://news.sairencolorarchive.com/assets/img/og.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <!-- ▲▲ ここまで ▲▲ -->
+
+  <link rel="stylesheet" href="/assets/css/news.css" />
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="site">SAIREN COLOR ARCHIVE</div>
+        <div class="page" id="pageTitle">NEWS</div>
+      </div>
+
+      <div class="actions">
+        <a class="pill" href="/" rel="noopener">NEWS</a>
+        <a class="pill" href="https://sairencolorarchive.com/" rel="noopener">MAIN</a>
+
+        <select class="pill" id="langSelect" aria-label="Language">
+          <option value="ja">JA</option>
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
+          <option value="ko">KO</option>
+          <option value="zh-hans">ZH</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1 class="h1" id="h1"></h1>
+      <p class="lead" id="sub"></p>
+    </section>
+
+    <article class="card article" id="article">
+      <div class="meta">
+        <span class="badge" id="badge"></span>
+        <span id="date"></span>
+      </div>
+
+      <div id="body"></div>
+    </article>
+
+    <div class="hr"></div>
+
+    <footer class="footer">
+      <div>© <span id="y"></span> SAIREN COLOR ARCHIVE</div>
+      <div><a href="https://news.sairencolorarchive.com/">news.sairencolorarchive.com</a></div>
+    </footer>
+
+  </div>
+
+  <!-- 記事データ（ここだけ編集すれば6言語対応になる） -->
+  <script id="postData" type="application/json">
+  {
+    "slug": "YYYY-MM-DD-slug",
+    "type": "collab",
+    "date": "2026-01-15",
+    "title": {
+      "ja": "（日本語タイトル）",
+      "en": "(English title)",
+      "es": "(Título en español)",
+      "fr": "(Titre en français)",
+      "ko": "(한국어 제목)",
+      "zh-hans": "(简体中文标题)"
+    },
+    "summary": {
+      "ja": "（要約：1〜2文）",
+      "en": "(Summary in English)",
+      "es": "(Resumen en español)",
+      "fr": "(Résumé en français)",
+      "ko": "(요약)",
+      "zh-hans": "(摘要)"
+    },
+    "bodyHtml": {
+      "ja": "<p>本文（HTML）を書きます。</p><h2>詳細</h2><ul><li>会期：YYYY/MM/DD</li><li>会場：XXXX</li></ul>",
+      "en": "<p>Write the body in HTML.</p>",
+      "es": "<p>Escribe el cuerpo en HTML.</p>",
+      "fr": "<p>Rédigez le contenu en HTML.</p>",
+      "ko": "<p>본문을 HTML로 작성합니다.</p>",
+      "zh-hans": "<p>用HTML撰写正文。</p>"
+    }
+  }
+  </script>
+
+  <script src="/assets/js/post.js" defer></script>
+</body>
+</html>
