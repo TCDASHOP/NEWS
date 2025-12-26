@@ -14,56 +14,60 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://news.sairencolorarchive.com/" />
   <meta property="og:image" content="https://news.sairencolorarchive.com/assets/img/og.jpg" />
-
   <meta name="twitter:card" content="summary_large_image" />
 
-  <link rel="stylesheet" href="/assets/css/news.css" />
+  <!-- ✅ ここが“同じデザイン”の核心：メインサイトのCSSをNEWSでも使う -->
+  <!-- メインのCSSを assets/shared/ にコピーして、ここで読み込む -->
+  <link rel="stylesheet" href="/assets/shared/site.css" />
+  <!-- 追加CSSが複数あるなら、同様に並べる -->
+  <!-- <link rel="stylesheet" href="/assets/shared/xxx.css" /> -->
+
+  <!-- NEWS専用（レイアウト微調整が必要なら。無ければ削除OK） -->
+  <link rel="stylesheet" href="/assets/news/news.css" />
 </head>
+
 <body>
-  <div class="wrap">
-
-    <header class="topbar">
-      <div class="brand">
-        <div class="site">SAIREN COLOR ARCHIVE</div>
-        <div class="page" id="pageTitle">NEWS</div>
-      </div>
-
-      <div class="actions">
-        <a class="pill" href="https://sairencolorarchive.com/" rel="noopener">MAIN</a>
-
-        <select class="pill" id="langSelect" aria-label="Language">
-          <option value="ja">JA</option>
-          <option value="en">EN</option>
-          <option value="es">ES</option>
-          <option value="fr">FR</option>
-          <option value="ko">KO</option>
-          <option value="zh-hans">ZH</option>
+  <!-- ✅ “メインと同じヘッダー”にしたいなら、メインの<header>…</header>をここにコピペ -->
+  <!-- MAIN HEADER START -->
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-logo" href="https://sairencolorarchive.com/">SAIREN COLOR ARCHIVE</a>
+      <nav class="site-nav">
+        <a href="https://sairencolorarchive.com/">HOME</a>
+        <a href="https://sairencolorarchive.com/#works">WORKS</a>
+        <a href="https://sairencolorarchive.com/about/">ABOUT</a>
+        <a href="https://look.sairencolorarchive.com/">LOOKBOOK</a>
+        <a href="https://www.tcda.shop/">SHOP</a>
+      </nav>
+      <div class="site-lang">
+        <select id="langSelect" aria-label="Language">
+          <option value="ja">JA</option><option value="en">EN</option><option value="es">ES</option>
+          <option value="fr">FR</option><option value="ko">KO</option><option value="zh-hans">ZH</option>
         </select>
       </div>
-    </header>
+    </div>
+  </header>
+  <!-- MAIN HEADER END -->
 
-    <section class="hero">
-      <h1 class="h1" id="h1">NEWS</h1>
-      <p class="lead" id="lead">
-        コラボ、個展、展覧会、公開情報をまとめます。
-      </p>
+  <main class="news-wrap">
+    <section class="news-hero">
+      <h1 id="h1">NEWS</h1>
+      <p id="lead">コラボ、個展、展覧会、公開情報をまとめます。</p>
     </section>
 
-    <div id="emptyState" class="empty" style="display:none;"></div>
+    <section id="emptyState" class="news-empty" style="display:none;"></section>
+    <section id="newsList" class="news-list" aria-label="News list"></section>
+  </main>
 
-    <section class="grid" id="newsList" aria-label="News list"></section>
+  <!-- ✅ “メインと同じフッター”があるなら、メインの<footer>…</footer>をコピペ -->
+  <footer class="site-footer">
+    <div>© <span id="y"></span> SAIREN COLOR ARCHIVE</div>
+  </footer>
 
-    <div class="hr"></div>
+  <!-- メイン共通JS（必要なら） -->
+  <script src="/assets/shared/site.js" defer></script>
 
-    <footer class="footer">
-      <div>© <span id="y"></span> SAIREN COLOR ARCHIVE</div>
-      <div>
-        <a href="https://sairencolorarchive.com/" rel="noopener">sairencolorarchive.com</a>
-      </div>
-    </footer>
-
-  </div>
-
-  <script src="/assets/js/news.js" defer></script>
+  <!-- NEWS一覧生成 -->
+  <script src="/assets/news/news.js" defer></script>
 </body>
 </html>
