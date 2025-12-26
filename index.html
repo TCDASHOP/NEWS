@@ -1,1 +1,69 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <title>NEWS｜SAIREN COLOR ARCHIVE</title>
+  <meta name="description" content="彩蓮（Sairen Takashima）のコラボ、個展、展覧会など最新情報。" />
+  <link rel="canonical" href="https://news.sairencolorarchive.com/" />
+
+  <!-- OG -->
+  <meta property="og:title" content="NEWS｜SAIREN COLOR ARCHIVE" />
+  <meta property="og:description" content="Collaborations, exhibitions, and event updates by Sairen Takashima." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://news.sairencolorarchive.com/" />
+  <meta property="og:image" content="https://news.sairencolorarchive.com/assets/img/og.jpg" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="stylesheet" href="/assets/css/news.css" />
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="site">SAIREN COLOR ARCHIVE</div>
+        <div class="page" id="pageTitle">NEWS</div>
+      </div>
+
+      <div class="actions">
+        <a class="pill" href="https://sairencolorarchive.com/" rel="noopener">MAIN</a>
+
+        <select class="pill" id="langSelect" aria-label="Language">
+          <option value="ja">JA</option>
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="fr">FR</option>
+          <option value="ko">KO</option>
+          <option value="zh-hans">ZH</option>
+        </select>
+      </div>
+    </header>
+
+    <section class="hero">
+      <h1 class="h1" id="h1">NEWS</h1>
+      <p class="lead" id="lead">
+        コラボ、個展、展覧会、公開情報をまとめます。
+      </p>
+    </section>
+
+    <div id="emptyState" class="empty" style="display:none;"></div>
+
+    <section class="grid" id="newsList" aria-label="News list"></section>
+
+    <div class="hr"></div>
+
+    <footer class="footer">
+      <div>© <span id="y"></span> SAIREN COLOR ARCHIVE</div>
+      <div>
+        <a href="https://sairencolorarchive.com/" rel="noopener">sairencolorarchive.com</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script src="/assets/js/news.js" defer></script>
+</body>
+</html>
